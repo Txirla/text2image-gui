@@ -8,6 +8,7 @@ namespace StableDiffusionGui.Io
     {
         public static void PatchAllPkgs()
         {
+            throw new Exception("Dangerous and most likely outdated!");
             PatchDiffusers();
             PatchHuggingfaceHub();
             PatchLycoris();

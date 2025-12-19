@@ -650,15 +650,16 @@ namespace StableDiffusionGui.Io
 
         public static void SetImageMetadata(string imgPath, string text, string keyName = "")
         {
-            if (string.IsNullOrWhiteSpace(text))
-                return;
-
-            text = text.Replace("\"", "\\\""); // Escape quotation marks
-            Process p = OsUtils.NewProcess(true);
-            p.StartInfo.Arguments = $"/C cd /D {Paths.GetDataPath().Wrap()} && {TtiUtils.GetEnvVarsSdCommand()} && {Constants.Files.VenvActivate} && python {Constants.Dirs.SdRepo}/addmetadata.py " +
-                $"-i {imgPath.Wrap()} -t {text.Wrap()} {(string.IsNullOrWhiteSpace(keyName) ? "" : $"-k {keyName}")}";
-            p.Start();
-            p.WaitForExit();
+            throw new NotImplementedException("Needs re-implementation.");
+            // if (string.IsNullOrWhiteSpace(text))
+            //     return;
+            // 
+            // text = text.Replace("\"", "\\\""); // Escape quotation marks
+            // Process p = OsUtils.NewProcess(true);
+            // p.StartInfo.Arguments = $"/C cd /D {Paths.GetDataPath().Wrap()} && {TtiUtils.GetEnvVarsSdCommand()} && {Constants.Files.VenvActivate} && python {Constants.Dirs.SdRepo}/addmetadata.py " +
+            //     $"-i {imgPath.Wrap()} -t {text.Wrap()} {(string.IsNullOrWhiteSpace(keyName) ? "" : $"-k {keyName}")}";
+            // p.Start();
+            // p.WaitForExit();
         }
 
         public static bool SetAttributes(string rootDir, ZetaLongPaths.Native.FileAttributes newAttributes = ZetaLongPaths.Native.FileAttributes.Normal, bool recursive = true)

@@ -1,4 +1,6 @@
-﻿namespace StableDiffusionGui.Main
+﻿using System.Diagnostics;
+
+namespace StableDiffusionGui.Main
 {
     public class Constants
     {
@@ -75,7 +77,7 @@
             public const string Config = "config.json";
             public const string Ini = "settings.ini";
             public const string PromptHistory = "promptHistory.json";
-            public static string VenvActivate { get { return $".\\{Dirs.SdVenv}\\Scripts\\activate.bat"; } }
+            public static string VenvActivate { get { Debug.Print($"WARNING: {nameof(VenvActivate)} MAY BE REPLACED IN THE FUTURE"); return $".\\{Dirs.SdVenv}\\Scripts\\activate.bat"; } }
         }
 
         public class FileExts

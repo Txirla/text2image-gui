@@ -76,7 +76,7 @@ namespace StableDiffusionGui.Forms
             InitializeControls();
             PromptHistory.Load();
             Setup.PatchFiles();
-            PatchUtils.PatchAllPkgs();
+            // PatchUtils.PatchAllPkgs();
 
             textboxPrompt.MaxLength = 0;
             textboxPromptNeg.MaxLength = 0;
@@ -540,7 +540,7 @@ namespace StableDiffusionGui.Forms
 
         private void btnExpandLoras_Click(object sender, EventArgs e)
         {
-            MainUi.SetPanelSize(panelLoras, btnExpandLoras, MainUi.PanelSizeMode.Toggle, heightMultiplier: 3);
+            MainUi.SetPanelSize(panelLoras, btnExpandLoras, MainUi.PanelSizeMode.Toggle);
         }
 
         private void openOutputFolderToolStripMenuItem1_Click(object sender, EventArgs e)

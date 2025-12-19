@@ -373,6 +373,15 @@ namespace StableDiffusionGui.Io
             if(modelType == "FLUX")
                 return ModelArch.Flux;
 
+            if (unetConfigJson.Contains("'adm_in_channels': 2816,"))
+                return ModelArch.SdXlBase;
+
+            if (unetConfigJson.Contains("'adm_in_channels': 2560,"))
+                return ModelArch.SdXlRefine;
+
+            if (unetConfigJson.Contains("'adm_in_channels': -1,") && unetConfigJson.Contains("'adm_in_channels': 'None',"))
+                return unetConfigJson.Contains("'in_channels': 9,") ? ModelArch.Sd1Inpaint : ModelArch.Sd1;
+
             JsonSerializerSettings settings = new JsonSerializerSettings
             {
                 ContractResolver = new DefaultContractResolver { NamingStrategy = new SnakeCaseNamingStrategy { ProcessDictionaryKeys = true } },
@@ -383,14 +392,15 @@ namespace StableDiffusionGui.Io
 
             var config = new UnetConfig();
 
-            try
-            {
-                config = JsonConvert.DeserializeObject<UnetConfig>(unetConfigJson, settings);
-            }
-            catch
-            {
-                return ModelArch.Sd1; // Assume Diffusers, which can currently only load SD1
-            }
+            // TODO: Detect diffusers
+            // try
+            // {
+            //     config = JsonConvert.DeserializeObject<UnetConfig>(unetConfigJson, settings);
+            // }
+            // catch
+            // {
+            //     return ModelArch.Sd1; // Assume Diffusers, which can currently only load SD1
+            // }
 
             if (config.AttentionResolutions != null && config.AttentionResolutions.Count == 2 && config.AdmInChannels > 0) // Must be SD XL
             {

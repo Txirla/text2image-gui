@@ -232,21 +232,26 @@ namespace StableDiffusionGui.Implementations
 
             disableFooocusPatch = true; // TEMPORARY
             ComfyUtils.SetExtensionEnabled("comfynmkd_foooc", !disableFooocusPatch);
-            string newStartupSettings = $"{comfyArgs}{Config.Instance.CudaDeviceIdx}{disableFooocusPatch}";
+            string newStartupSettingsHash = $"{comfyArgs}{Config.Instance.CudaDeviceIdx}{disableFooocusPatch}";
 
-            if (!TtiProcess.IsAiProcessRunning || (TtiProcess.IsAiProcessRunning && TtiProcess.LastStartupSettings != newStartupSettings))
+            if (!TtiProcess.IsAiProcessRunning || (TtiProcess.IsAiProcessRunning && TtiProcess.LastStartupSettings != newStartupSettingsHash))
             {
                 if (TextToImage.Canceled) return;
 
-                PatchUtils.PatchDiffusers();
-                Logger.Log($"(Re)starting Comfy. Process running: {TtiProcess.IsAiProcessRunning} - Prev startup string: '{TtiProcess.LastStartupSettings}' - New startup string: '{newStartupSettings}'", true);
-                TtiProcess.LastStartupSettings = newStartupSettings;
+                // PatchUtils.PatchDiffusers();
+                Logger.Log($"(Re)starting Comfy. Process running: {TtiProcess.IsAiProcessRunning} - Prev startup string: '{TtiProcess.LastStartupSettings}' - New startup string: '{newStartupSettingsHash}'", true);
+                TtiProcess.LastStartupSettings = newStartupSettingsHash;
 
                 Process py = OsUtils.NewProcess(true, logAction: HandleOutput);
                 TextToImage.CurrentTask.Processes.Add(py);
 
-                py.StartInfo.Arguments = $"/C cd /D {Paths.GetDataPath().Wrap()} && {TtiUtils.GetEnvVarsSdCommand()} && {Constants.Files.VenvActivate} && python repo/comfyui/main.py {comfyArgs}";
-                Logger.Log("cmd.exe " + py.StartInfo.Arguments, true);
+                // TODO: User-adjustable ComfyUI path
+                string comfyPath = "D:\\AI\\ComfyUI\\ComfyUI";
+                string activatePath = Path.Combine(comfyPath, "venv", "Scripts", "activate.bat");
+                string mainPyPath = Path.Combine(comfyPath, "main.py");
+
+                py.StartInfo.Arguments = $"/C cd /D {Paths.GetDataPath().Wrap()} && {TtiUtils.GetEnvVarsSdCommand()} && call {activatePath.Wrap()} && python {mainPyPath.Wrap()} {comfyArgs}";
+                Logger.Log($"cmd.exe {py.StartInfo.Arguments}", true);
 
                 if (TtiProcess.CurrentProcess != null)
                 {
@@ -265,7 +270,7 @@ namespace StableDiffusionGui.Implementations
 
                 Task.Run(() => TtiProcess.CheckStillRunning());
 
-                await Logger.WaitForMessageAsync("To see the GUI go to:", contains: true);
+                await Logger.WaitForMessageAsync("To see the GUI go to: http", contains: true);
                 Logger.Log($"Comfy startup time: {sw.ElapsedMs} ms", true);
             }
             else
